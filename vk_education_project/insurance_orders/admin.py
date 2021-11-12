@@ -1,3 +1,7 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Zones, InsuranceOptions, InsuranceOrders
+
+admin.site.register(Zones)
+admin.site.register(InsuranceOptions)
+admin.site.register(InsuranceOrders)

@@ -22,6 +22,9 @@ class InsuranceOptions(models.Model):
     base_price = models.DecimalField(max_digits=12, decimal_places=2)
     daily_price = models.DecimalField(max_digits=12, decimal_places=2)
 
+    def __str__(self):
+        return self.name
+
     class Meta:
         verbose_name = 'Опция'
         verbose_name_plural = 'Опции'
@@ -39,28 +42,3 @@ class InsuranceOrders(models.Model):
     class Meta:
         verbose_name = 'Страховое предложение'
         verbose_name_plural = 'Страховые предложения'
-
-
-class PolicyHolders(models.Model):
-    first_name = models.CharField(max_length=75)
-    last_name = models.CharField(max_length=75)
-    document_number = models.CharField(max_length=10)
-    phone = models.CharField(max_length=16)
-    email = models.EmailField()
-    birth_date = models.DateField()
-
-    class Meta:
-        verbose_name = 'Застрахованный'
-        verbose_name_plural = 'Застрахованные'
-        ordering = ['-last_name']
-
-
-class InsuranceDeals(models.Model):
-    holder = models.ForeignKey(PolicyHolders, on_delete=models.CASCADE)
-    options = models.ManyToManyField(InsuranceOptions)
-    start_date = models.DateField()
-    end_date = models.DateField()
-
-    class Meta:
-        verbose_name = 'Выбранное предложение'
-        verbose_name_plural = 'Выбранные предложения'
