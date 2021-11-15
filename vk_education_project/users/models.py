@@ -30,6 +30,16 @@ class InsuranceDeals(models.Model):
     start_date = models.DateField(verbose_name='Дата начала действия')
     end_date = models.DateField(verbose_name='Дата окончания действия')
 
+    @property
+    def duration(self):
+        return (self.end_date - self.start_date).days
+
+    def total_price(self):
+        price = 0
+        for option in self.options.values():
+            price += option['base_price'] + self.duration * option['daily_price']
+        return price
+
     class Meta:
         verbose_name = 'Выбранное предложение'
         verbose_name_plural = 'Выбранные предложения'
