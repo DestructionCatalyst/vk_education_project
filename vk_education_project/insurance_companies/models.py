@@ -16,3 +16,14 @@ class InsuranceCompanies(models.Model):
         verbose_name = 'Страховая компания'
         verbose_name_plural = 'Страховые компании'
         ordering = ['-name']
+
+    def as_dict(self):
+        return {'id': self.pk,
+                'name': self.name,
+                'phone': self.phone,
+                'email': self.email,
+                'website': self.website,
+                'bank_details': self.bank_details,
+                'address': self.address
+                }
+
