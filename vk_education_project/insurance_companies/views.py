@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse, QueryDict
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.utils import IntegrityError
 
 from rest_framework import generics
 
@@ -9,8 +10,6 @@ import os
 from application.settings import TEMPLATE_DIR
 from .models import InsuranceCompanies
 from .serializers import CompaniesListSerializer, CompanyDetailSerializer
-
-
 
 
 @require_GET
@@ -40,15 +39,19 @@ def company_details(request, company_id):
 
 @require_POST
 def create_company(request):
-    new_company = InsuranceCompanies(**request.POST.dict())
-    new_company.save()
-    return JsonResponse(new_company.as_dict(), status=201)
+    try:
+        new_company = InsuranceCompanies(**request.POST.dict())
+        new_company.save()
+        return JsonResponse(new_company.as_dict(), status=201)
+    except TypeError:
+        return JsonResponse({'error': 'Unexpected parameters in request body'}, status=400)
+    except IntegrityError as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
 
 @require_http_methods(['PUT'])
 def update_company(request, company_id):
     params = QueryDict(request.body).dict()
-    print(params)
     try:
         if InsuranceCompanies.objects.filter(pk=company_id).exists():
             status = 200
@@ -59,6 +62,10 @@ def update_company(request, company_id):
         return JsonResponse(company.as_dict(), status=status)
     except ObjectDoesNotExist:
         return JsonResponse({'error': 'Object not found'}, status=404)
+    except TypeError:
+        return JsonResponse({'error': 'Unexpected parameters in request body'}, status=400)
+    except IntegrityError as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
 
 @require_http_methods(['DELETE'])
@@ -69,6 +76,8 @@ def delete_company(request, company_id):
         return JsonResponse({'company': company.as_dict()})
     except ObjectDoesNotExist:
         return JsonResponse({'error': 'Object not found'}, status=404)
+    except IntegrityError as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
 
 class CompanyCreateView(generics.CreateAPIView):

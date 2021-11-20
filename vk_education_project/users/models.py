@@ -15,7 +15,7 @@ class InsuranceUsers(AbstractUser):
     birth_date = models.DateField(null=True, verbose_name='Дата рождения')
 
     def __str__(self):
-        return self.last_name
+        return str(self.first_name) + ' ' + str(self.last_name)
 
     class Meta:
         verbose_name = 'Пользователь'
@@ -29,6 +29,9 @@ class InsuranceDeals(models.Model):
     options = models.ManyToManyField(InsuranceOptions, verbose_name='Выбранные опции')
     start_date = models.DateField(verbose_name='Дата начала действия')
     end_date = models.DateField(verbose_name='Дата окончания действия')
+
+    def __str__(self):
+        return str(self.holder) + ', ' + str(self.order)
 
     @property
     def duration(self):

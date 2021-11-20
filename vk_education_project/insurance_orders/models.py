@@ -9,10 +9,14 @@ class Zones(models.Model):
     def __str__(self):
         return self.name
 
+    def as_dict(self):
+        return {'id': self.pk,
+                'name': self.name}
+
     class Meta:
         verbose_name = 'Таможенная зона'
         verbose_name_plural = 'Таможенные зоны'
-        ordering = ['-name']
+        ordering = ['id']
 
 
 class InsuranceOptions(models.Model):
@@ -21,6 +25,15 @@ class InsuranceOptions(models.Model):
     insurance_amount = models.DecimalField(max_digits=12, decimal_places=2, verbose_name='Страховая сумма')
     base_price = models.DecimalField(max_digits=12, decimal_places=2, verbose_name='Базовая цена')
     daily_price = models.DecimalField(max_digits=12, decimal_places=2, verbose_name='Цена за день пребывания')
+
+    def as_dict(self):
+        return {'id': self.pk,
+                'name': self.name,
+                'description': self.description,
+                'insurance_amount': self.insurance_amount,
+                'base_price': self.base_price,
+                'daily_price': self.daily_price,
+                }
 
     def __str__(self):
         return self.name
@@ -41,6 +54,16 @@ class InsuranceOrders(models.Model):
 
     def __str__(self):
         return str(self.company) + ', ' + str(self.zone)
+
+    def as_dict(self):
+        return {'id': self.pk,
+                'zone': self.zone.as_dict(),
+                'company': self.company.as_dict(),
+                'available_options': list(map(lambda option: option.as_dict(), self.available_options.all())),
+                'min_age': self.min_age,
+                'max_age': self.max_age,
+                'franchise': self.franchise
+                }
 
     class Meta:
         verbose_name = 'Страховое предложение'
