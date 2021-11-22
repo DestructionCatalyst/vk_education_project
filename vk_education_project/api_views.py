@@ -32,7 +32,7 @@ def list_objects(request, model_type):
 def object_details(request, object_id, model_type):
     try:
         obj = model_type.objects.get(pk=object_id)
-        return JsonResponse({'company': obj.as_dict()})
+        return JsonResponse({'data': obj.as_dict()})
     except ObjectDoesNotExist:
         return JsonResponse({'error': 'Object not found'}, status=404)
 
@@ -78,3 +78,5 @@ def delete_object(request, object_id, model_type):
         return JsonResponse({'error': 'Object not found'}, status=404)
     except IntegrityError as e:
         return JsonResponse({'error': str(e)}, status=500)
+    except ValueError:
+        pass

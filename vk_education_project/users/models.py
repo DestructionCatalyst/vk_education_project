@@ -17,6 +17,16 @@ class InsuranceUsers(AbstractUser):
     def __str__(self):
         return str(self.first_name) + ' ' + str(self.last_name)
 
+    def as_dict(self):
+        return {'id': self.pk,
+                'first_name': self.first_name,
+                'last_name': self.last_name,
+                'email': self.email,
+                'document_number': self.document_number,
+                'phone': self.phone,
+                'birth_date': self.birth_date,
+                }
+
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
@@ -32,6 +42,15 @@ class InsuranceDeals(models.Model):
 
     def __str__(self):
         return str(self.holder) + ', ' + str(self.order)
+
+    def as_dict(self):
+        return {'id': self.pk,
+                'holder': self.holder.as_dict(),
+                'order': self.order.as_dict(),
+                'options': list(map(lambda option: option.as_dict(), self.options.all())),
+                'start_date': self.start_date,
+                'end_date': self.end_date,
+                }
 
     @property
     def duration(self):

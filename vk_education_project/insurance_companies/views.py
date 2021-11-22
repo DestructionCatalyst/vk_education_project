@@ -91,4 +91,4 @@ class CompaniesListView(generics.ListAPIView):
 
 class CompanyDetailsView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CompanyDetailSerializer
-    queryset = InsuranceCompanies.objects.all( )
+    queryset = InsuranceCompanies.objects.all()

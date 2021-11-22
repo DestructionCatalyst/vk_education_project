@@ -1,12 +1,15 @@
 from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import render
-from django.views.decorators.http import require_GET, require_POST, require_http_methods
+from django.views.decorators.http import require_POST, require_http_methods
+from rest_framework import generics
+from django.db.utils import IntegrityError
+from django.http import JsonResponse, QueryDict
+
 from .models import InsuranceOrders, Zones, InsuranceOptions
 from insurance_companies.models import InsuranceCompanies
 from api_views import api_function_of, details_api_function_of
 from api_views import list_objects, object_details, create_object, update_object, delete_object
-from django.db.utils import IntegrityError
-from django.http import JsonResponse, QueryDict
+from .serializers import OrdersListSerializer, OrderDetailSerializer, OptionListSerializer, OptionDetailSerializer, \
+    ZonesListSerializer, ZoneDetailSerializer
 
 
 offer_api_function = api_function_of(InsuranceOrders)
@@ -81,3 +84,45 @@ option_details = option_details_api_function(object_details)
 create_option = option_api_function(create_object)
 update_option = option_details_api_function(update_object)
 delete_option = option_details_api_function(delete_object)
+
+
+class ZoneCreateView(generics.CreateAPIView):
+    serializer_class = ZoneDetailSerializer
+
+
+class ZonesListView(generics.ListAPIView):
+    serializer_class = ZonesListSerializer
+    queryset = Zones.objects.all()
+
+
+class ZoneDetailsView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = ZoneDetailSerializer
+    queryset = Zones.objects.all()
+
+
+class OrderCreateView(generics.CreateAPIView):
+    serializer_class = OrderDetailSerializer
+
+
+class OrderListView(generics.ListAPIView):
+    serializer_class = OrdersListSerializer
+    queryset = InsuranceOrders.objects.all()
+
+
+class OrderDetailsView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = OrderDetailSerializer
+    queryset = InsuranceOrders.objects.all()
+
+
+class OptionCreateView(generics.CreateAPIView):
+    serializer_class = OptionDetailSerializer
+
+
+class OptionListView(generics.ListAPIView):
+    serializer_class = OptionListSerializer
+    queryset = InsuranceOptions.objects.all()
+
+
+class OptionDetailsView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = OptionDetailSerializer
+    queryset = InsuranceOptions.objects.all()
