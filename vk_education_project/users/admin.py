@@ -1,7 +1,5 @@
 from django.contrib import admin
 
-from .models import InsuranceUsers, InsuranceDeals
+from .models import InsuranceUsers
 
 admin.site.register(InsuranceUsers)
-admin.site.register(InsuranceDeals)
-

@@ -1,9 +1,9 @@
+from django.contrib.auth.password_validation import validate_password as builtin_validate_password
 from rest_framework import serializers
 from rest_framework.fields import CharField, EmailField
-
-from .models import InsuranceDeals, InsuranceUsers
 from rest_framework.validators import UniqueValidator
-from django.contrib.auth.password_validation import validate_password as builtin_validate_password
+
+from .models import InsuranceUsers
 
 
 class UsersListSerializer(serializers.ModelSerializer):
@@ -37,20 +37,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = InsuranceUsers
-        fields = ('username', 'password', 'email', 'first_name', 'last_name', 'document_number', 'phone', 'birth_date')
+        fields = ('username', 'password', 'email', 'first_name', 'last_name', 'document_number', 'phone', 'birth_date', 'is_active')
         extra_kwargs = {'password': {'write_only': True},
                         'document_number': {'write_only': True},
                         'birth_date': {'read_only': True}}
-
-
-class DealsListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = InsuranceDeals
-        fields = ('id', 'holder', 'order')
-
-
-class DealDetailSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = InsuranceDeals
-        fields = '__all__'
-

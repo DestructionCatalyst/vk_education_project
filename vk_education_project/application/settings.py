@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'insurance_companies',
     'insurance_orders',
     'users',
-    'rest_framework'
+    'rest_framework',
+    'insurance_deals'
 ]
 
 MIDDLEWARE = [
