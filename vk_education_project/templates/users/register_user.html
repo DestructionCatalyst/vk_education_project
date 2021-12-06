@@ -1,0 +1,28 @@
+{% load static %}
+<html>
+<head>
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css'%}">
+</head>
+<body>
+    <div class="central-column">
+        <p>Введите свои данные:</p>
+
+        <form action="{% url 'register' %}" method="POST">
+            {% csrf_token %}
+            {{ form.non_field.errors }}
+            <table>
+                {% for field in form %}
+                    <tr class="fieldWrapper">
+                        {{ field.errors }}
+                        <td>{{ field.label_tag }}</td> <td>{{ field }}</td>
+                        {% if field.help_text %}
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </table>
+            <button type="submit" class="auth-button">Зарегистирироваться</button>
+        </form>
+    </div>
+</body>
+</html>

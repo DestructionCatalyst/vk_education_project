@@ -3,6 +3,7 @@ from django.http import JsonResponse, QueryDict
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.utils import IntegrityError
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 from rest_framework import generics
 
@@ -10,6 +11,7 @@ import os
 from application.settings import TEMPLATE_DIR
 from .models import InsuranceCompanies
 from .serializers import CompaniesListSerializer, CompanyDetailSerializer
+from users.login_decorators import login_required
 
 
 @require_GET
@@ -28,6 +30,7 @@ def list_companies(request):
     return JsonResponse({'data': companies_dicts})
 
 
+@login_required(need_admin=False)
 @require_GET
 def company_details(request, company_id):
     try:
@@ -37,6 +40,7 @@ def company_details(request, company_id):
         return JsonResponse({'error': 'Object not found'}, status=404)
 
 
+@login_required(need_admin=True, redirect_page='Companies list')
 @require_POST
 def create_company(request):
     try:
@@ -49,6 +53,7 @@ def create_company(request):
         return JsonResponse({'error': str(e)}, status=500)
 
 
+@login_required(need_admin=True, redirect_page='Companies list')
 @require_http_methods(['PUT'])
 def update_company(request, company_id):
     params = QueryDict(request.body).dict()
@@ -68,6 +73,7 @@ def update_company(request, company_id):
         return JsonResponse({'error': str(e)}, status=500)
 
 
+@login_required(need_admin=True, redirect_page='Companies list')
 @require_http_methods(['DELETE'])
 def delete_company(request, company_id):
     try:
@@ -80,15 +86,21 @@ def delete_company(request, company_id):
         return JsonResponse({'error': str(e)}, status=500)
 
 
-class CompanyCreateView(generics.CreateAPIView):
+class CompanyCreateView(generics.CreateAPIView, UserPassesTestMixin):
     serializer_class = CompanyDetailSerializer
 
+    def test_func(self):
+        return self.request.user.is_staff and self.request.user.is_active
 
-class CompaniesListView(generics.ListAPIView):
+
+class CompaniesListView(generics.ListAPIView, LoginRequiredMixin):
     serializer_class = CompaniesListSerializer
     queryset = InsuranceCompanies.objects.all()
 
 
-class CompanyDetailsView(generics.RetrieveUpdateDestroyAPIView):
+class CompanyDetailsView(generics.RetrieveUpdateDestroyAPIView, UserPassesTestMixin):
     serializer_class = CompanyDetailSerializer
     queryset = InsuranceCompanies.objects.all()
+
+    def test_func(self):
+        return self.request.user.is_staff and self.request.user.is_active

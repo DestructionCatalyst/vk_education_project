@@ -1,0 +1,40 @@
+.central-column {
+    margin: 0% 25% 0% 25%;
+    width: 50%;
+    border: 1px solid #666;
+    padding: 10px;
+}
+
+.messages {
+    margin: 2% 15% 0% 10%;
+    width: 75%;
+    border: 1px solid #5F9EA0;
+    background: #E0FFFF;
+}
+
+.item-without-markers {
+    list-style-type: none
+}
+
+.auth-button {
+    background-color: white;
+    color: black;
+    border: 2px solid #666;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    width: 220px;
+    height: 75px;
+    vertical-align: top;
+}
+
+.button-content {
+    vertical-align: center;
+    display: inline-block;
+}
+
+.wrapper {
+    margin: 10px;
+}

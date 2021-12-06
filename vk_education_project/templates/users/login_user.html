@@ -1,0 +1,48 @@
+{% load static %}
+<html>
+<head>
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css'%}">
+</head>
+<body>
+    <div class="central-column">
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li class="item-without-markers"> {{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <p align="center">Введите логин и пароль.
+            Если Вы впервые на сайте, <a href="{% url 'register' %}">зарегистрируйтесь</a>.</p>
+        <form action="{% url 'login' %}" method="POST">
+            {% csrf_token %}
+            {{ form.non_field.errors }}
+            <table>
+            {% for field in form %}
+            <tr class="fieldWrapper">
+                {{ field.errors }}
+                <td>{{ field.label_tag }}</td> <td>{{ field }}</td>
+                {% if field.help_text %}
+                {% endif %}
+            </tr>
+            {% endfor %}
+            </table>
+            <div class="wrapper">
+            <button type="submit" class="auth-button">Войти</button>
+            </div>
+        </form>
+        <div class="wrapper">
+        <a href="{% url 'social:begin' 'google-oauth2' %}">
+                <button class="auth-button">
+                    <img src="https://mygs.ru/files/brands/%D1%88.jpg"
+                        width="20px" height="auto">
+                    <div class="button-content">
+                        Войти через Google
+                    </div>
+                </button>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

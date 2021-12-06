@@ -1,24 +1,30 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.http import require_POST, require_http_methods
-from rest_framework import generics, status
+from rest_framework import generics
 from django.db.utils import IntegrityError
 from django.http import JsonResponse, QueryDict
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from api_views import api_function_of, details_api_function_of
 from api_views import list_objects, object_details, create_object, update_object, delete_object
-from rest_framework.response import Response
 
 from .models import InsuranceDeals
+from users.models import InsuranceUsers
 from insurance_orders.models import InsuranceOrders, InsuranceOptions
 from .serializers import DealsListSerializer, DealDetailSerializer
+from users.login_decorators import login_required
 
 deal_api_function = api_function_of(InsuranceDeals)
 deal_details_api_function = details_api_function_of(InsuranceDeals)
 
-list_deals = deal_api_function(list_objects)
-deal_details = deal_details_api_function(object_details)
+user_required = login_required()
+admin_required = login_required(need_admin=True)
+
+list_deals = user_required(deal_api_function(list_objects))
+deal_details = user_required(deal_details_api_function(object_details))
 
 
+@login_required
 @require_POST
 def create_deal(request):
     try:
@@ -38,6 +44,7 @@ def create_deal(request):
         return JsonResponse({'error': str(e)}, status=500)
 
 
+@login_required
 @require_http_methods(['PUT'])
 def update_deal(request, object_id):
     params = QueryDict(request.body).dict()
@@ -64,19 +71,19 @@ def update_deal(request, object_id):
         return JsonResponse({'error': str(e)}, status=500)
 
 
-delete_deal = deal_details_api_function(delete_object)
+delete_deal = user_required(deal_details_api_function(delete_object))
 
 
-class DealCreateView(generics.CreateAPIView):
+class DealCreateView(generics.CreateAPIView, LoginRequiredMixin):
     serializer_class = DealDetailSerializer
 
 
-class DealsListView(generics.ListAPIView):
+class DealsListView(generics.ListAPIView, LoginRequiredMixin):
     serializer_class = DealsListSerializer
     queryset = InsuranceDeals.objects.all()
 
 
-class DealDetailsView(generics.RetrieveUpdateDestroyAPIView):
+class DealDetailsView(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
     serializer_class = DealDetailSerializer
     queryset = InsuranceDeals.objects.all()
 

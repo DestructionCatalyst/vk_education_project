@@ -2,10 +2,15 @@ from django.urls import path
 
 from .views import index, list_users, user_details, create_user, update_user, delete_user
 from .views import UserDetailsView, UserCreateView, UsersListView
+from .views import login_user, register_user, logout_user
 
 
 urlpatterns = [
-    path('', index),
+    path('', index, name='index'),
+
+    path('login/', login_user, name='login'),
+    path('register/', register_user, name='register'),
+    path('logout/', logout_user, name='logout'),
 
     path('api/v1/list', list_users, name='Users list'),
     path('api/v1/<int:object_id>/details', user_details, name='User details'),

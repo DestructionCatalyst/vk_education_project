@@ -21,5 +21,6 @@ urlpatterns = [
     path('users/', include('users.urls')),
     path('deals/', include('insurance_deals.urls')),
     path('companies/', include('insurance_companies.urls')),
-    path('offers/', include('insurance_orders.urls'))
+    path('offers/', include('insurance_orders.urls')),
+    path('', include('social_django.urls', namespace='social'))
 ]
