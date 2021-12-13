@@ -1,0 +1,84 @@
+version: '3.9'
+
+volumes:
+  postgres_data: {}
+
+
+services:
+  vk_education_project:
+    build:
+      context: ./vk_education_project
+    volumes:
+      - ./vk_education_project:/app
+    command: /start.sh
+    entrypoint: /entrypoint.sh
+    restart: on-failure
+    env_file:
+      - ./vk_education_project/.env
+    ports:
+      - '8000:8000'
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:latest
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+#      LANG: ru_RU.UTF-8
+#      LANGUAGE: ru_RU.UTF-8
+#      LC_ALL: ru_RU.UTF-8
+    ports:
+      - '5435:5435'
+    command: -p 5435
+
+  celery:
+    build:
+      context: ./vk_education_project
+    command: celery -A application worker -l info
+    volumes:
+      - ./vk_education_project:/app
+    env_file:
+      - ./vk_education_project/.env
+    depends_on:
+      - db
+      - redis
+
+  celery-beat:
+    build:
+      context: ./vk_education_project
+    command: celery -A application beat -l info
+    volumes:
+      - ./vk_education_project:/app
+    env_file:
+      - ./vk_education_project/.env
+    depends_on:
+      - db
+      - redis
+
+  celery-dashboard:
+    build:
+      context: ./vk_education_project
+    command: celery -A application flower  --address=0.0.0.0 --port=5566
+    volumes:
+      - ./vk_education_project:/app
+    ports:
+      - '5566:5566'
+    env_file:
+      - ./vk_education_project/.env
+    depends_on:
+      - db
+      - redis
+
+
+  redis:
+    image: redis:latest
+    command: redis-server --port 6380
+    ports:
+      - '6380:6380'
+    volumes:
+      - ./vk_education_project:/app

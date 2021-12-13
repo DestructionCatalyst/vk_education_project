@@ -120,7 +120,6 @@ def login_user(request):
             messages.error(request, 'Неверный логин или пароль!')
     else:
         form = UserLoginForm()
-        get
     return render(request, os.path.join(TEMPLATE_DIR, 'users/login_user.html'),
                   context={'title': 'Login user', 'form': form})
 

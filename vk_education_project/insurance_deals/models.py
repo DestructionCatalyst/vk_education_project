@@ -18,7 +18,7 @@ class InsuranceDeals(models.Model):
 
     def as_dict(self):
         return {'id': self.pk,
-                'holder': self.holder.as_dict(),
+                'holder': self.holder.id,
                 'order': self.order.as_dict(),
                 'options': list(map(lambda option: option.as_dict(), self.options.all())),
                 'start_date': self.start_date,
